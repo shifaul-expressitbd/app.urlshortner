@@ -12,26 +12,62 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
+  private getCookie(name: string): string | null {
+    if (typeof window === 'undefined') return null;
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  private async ensureCsrfToken(): Promise<string | null> {
+    if (typeof window === 'undefined') return null;
+
+    let token = this.getCookie('csrf-token');
+
+    if (!token) {
+      try {
+        let url = '';
+        const endpoint = '/csrf-token';
+
+        if (this.baseUrl) {
+          url = `${this.baseUrl}${endpoint}`;
+        } else {
+          url = `/api${endpoint}`;
+        }
+
+        await fetch(url, {
+          method: 'GET',
+          credentials: 'include'
+        });
+
+        token = this.getCookie('csrf-token');
+      } catch (e) {
+        console.error("Failed to fetch CSRF token", e);
+      }
+    }
+    return token;
+  }
+
+
   private async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     // If baseUrl is empty, we are using proxy, so just use endpoint (ensure /api prefix if needed)
     // However, our endpoints in code usually start with / or /api?
     // Let's assume endpoints passed to this client are like '/auth/login' or '/urls'
     // If we use proxy, we need them to be accessed as '/api/auth/login'
-    
+
     let url = '';
     if (this.baseUrl) {
-        url = `${this.baseUrl}${endpoint}`;
+      url = `${this.baseUrl}${endpoint}`;
     } else {
-        // Proxy mode: prepend /api if endpoint doesn't have it (assuming rewrites handle /api)
-        // Check if endpoint starts with /api
-        if (endpoint.startsWith('/api')) {
-             url = endpoint;
-        } else {
-             // If endpoint is /auth/login, we want /api/auth/login
-             url = `/api${endpoint}`;
-        }
+      // Proxy mode: prepend /api if endpoint doesn't have it (assuming rewrites handle /api)
+      // Check if endpoint starts with /api
+      if (endpoint.startsWith('/api')) {
+        url = endpoint;
+      } else {
+        // If endpoint is /auth/login, we want /api/auth/login
+        url = `/api${endpoint}`;
+      }
     }
-    
+
     // Get token from document.cookie (client-side only)
     let token = '';
     if (typeof window !== 'undefined') {
@@ -39,93 +75,98 @@ class ApiClient {
       if (match) token = match[2];
     }
 
+    // Ensure CSRF token is present
+    const csrfToken = await this.ensureCsrfToken();
+
     const headers = {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(csrfToken ? { 'x-csrf-token': csrfToken } : {}),
       ...options.headers,
     };
 
     const config: RequestInit = {
       ...options,
       headers,
+      credentials: 'include',
     };
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         if (response.status === 401) {
-            // Prevent redirect loop on login page
-            if (typeof window !== 'undefined' && window.location.pathname.startsWith('/login')) {
-                 const errorData = await response.json().catch(() => ({}));
-                 throw new Error(errorData.message || `API Error: ${response.statusText}`);
-            }
+          // Prevent redirect loop on login page
+          if (typeof window !== 'undefined' && window.location.pathname.startsWith('/login')) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `API Error: ${response.statusText}`);
+          }
 
-            // Attempt to refresh token
-            if (typeof window !== 'undefined') {
-                const refreshTokenMatch = document.cookie.match(new RegExp('(^| )refresh_token=([^;]+)'));
-                const refreshToken = refreshTokenMatch ? refreshTokenMatch[2] : null;
+          // Attempt to refresh token
+          if (typeof window !== 'undefined') {
+            const refreshTokenMatch = document.cookie.match(new RegExp('(^| )refresh_token=([^;]+)'));
+            const refreshToken = refreshTokenMatch ? refreshTokenMatch[2] : null;
 
-                if (refreshToken) {
-                    try {
-                        // We must use fetch directly to avoid infinite loops if the refresh endpoint itself returns 401
-                        // Also, we need to pass the refresh token in Authorization header as per backend spec
-                        const refreshResponse = await fetch(`${url.startsWith('http') ? '' : this.baseUrl || '/api'}/auth/refresh`, {
-                            method: 'GET',
-                            headers: {
-                                'Authorization': `Bearer ${refreshToken}`,
-                                'Content-Type': 'application/json'
-                            }
-                        });
+            if (refreshToken) {
+              try {
+                // We must use fetch directly to avoid infinite loops if the refresh endpoint itself returns 401
+                // Also, we need to pass the refresh token in Authorization header as per backend spec
+                const refreshResponse = await fetch(`${url.startsWith('http') ? '' : this.baseUrl || '/api'}/auth/refresh`, {
+                  method: 'GET',
+                  headers: {
+                    'Authorization': `Bearer ${refreshToken}`,
+                    'Content-Type': 'application/json'
+                  }
+                });
 
-                        if (refreshResponse.ok) {
-                             const data = await refreshResponse.json();
-                             const newAccessToken = data.data.accessToken;
-                             const newRefreshToken = data.data.refreshToken;
+                if (refreshResponse.ok) {
+                  const data = await refreshResponse.json();
+                  const newAccessToken = data.data.accessToken;
+                  const newRefreshToken = data.data.refreshToken;
 
-                             // Update cookies
-                             document.cookie = `access_token=${newAccessToken}; path=/; max-age=900; SameSite=Lax`;
-                             document.cookie = `refresh_token=${newRefreshToken}; path=/; max-age=604800; SameSite=Lax`;
+                  // Update cookies
+                  document.cookie = `access_token=${newAccessToken}; path=/; max-age=900; SameSite=Lax`;
+                  document.cookie = `refresh_token=${newRefreshToken}; path=/; max-age=604800; SameSite=Lax`;
 
-                             // Retry original request with new token
-                             const newHeaders = {
-                                 ...config.headers,
-                                 'Authorization': `Bearer ${newAccessToken}`
-                             };
-                             
-                             return await fetch(url, { ...config, headers: newHeaders }).then(async (res) => {
-                                 if (!res.ok) {
-                                     const err = await res.json().catch(() => ({}));
-                                     throw new Error(err.message || res.statusText);
-                                 }
-                                 const text = await res.text();
-                                 const data = text ? JSON.parse(text) : {};
-                                 return data.data || data;
-                             });
-                        }
-                    } catch (e) {
-                        console.error("Token refresh failed:", e);
+                  // Retry original request with new token
+                  const newHeaders = {
+                    ...config.headers,
+                    'Authorization': `Bearer ${newAccessToken}`
+                  };
+
+                  return await fetch(url, { ...config, headers: newHeaders }).then(async (res) => {
+                    if (!res.ok) {
+                      const err = await res.json().catch(() => ({}));
+                      throw new Error(err.message || res.statusText);
                     }
+                    const text = await res.text();
+                    const data = text ? JSON.parse(text) : {};
+                    return data.data || data;
+                  });
                 }
-            
-                window.location.href = '/login';
-                // Return a pending promise to halt execution flow while redirecting
-                return new Promise(() => {});
+              } catch (e) {
+                console.error("Token refresh failed:", e);
+              }
             }
+
+            window.location.href = '/login';
+            // Return a pending promise to halt execution flow while redirecting
+            return new Promise(() => { });
+          }
         }
-        
+
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `API Error: ${response.statusText}`);
       }
 
       // Handle generic success response format { success: true, data: ... }
-       const text = await response.text();
-       const data = text ? JSON.parse(text) : {};
-       
-       if (data.data) {
-           return data.data as T;
-       }
-       return data as T;
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : {};
+
+      if (data.data) {
+        return data.data as T;
+      }
+      return data as T;
 
     } catch (error) {
       console.error('API Request Failed:', error);

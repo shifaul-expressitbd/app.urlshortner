@@ -21,9 +21,7 @@ function VerifyEmailContent() {
 
         async function verify() {
             try {
-                // Assuming POST /auth/verify-email based on standard practices
-                // Adjust endpoint if backend differs (e.g. GET /auth/verify-email/:token)
-                await api.post('/auth/verify-email', { token })
+                await api.get(`/auth/verify-email?token=${token}`)
                 setStatus('success')
                 toast.success("Email verified successfully")
             } catch (error: any) {
@@ -66,7 +64,7 @@ function VerifyEmailContent() {
     if (status === 'error') {
         return (
             <div className="flex flex-col items-center justify-center text-center space-y-4">
-                 <div className="rounded-full bg-red-100 p-3 dark:bg-red-900/20">
+                <div className="rounded-full bg-red-100 p-3 dark:bg-red-900/20">
                     <LuMail className="h-8 w-8 text-red-600 dark:text-red-500" />
                 </div>
                 <h1 className="text-2xl font-semibold">Verification Failed</h1>
@@ -83,7 +81,7 @@ function VerifyEmailContent() {
     // Default 'idle' state: Instructions to check email
     return (
         <div className="flex flex-col items-center justify-center text-center space-y-4">
-             <div className="rounded-full bg-primary/10 p-3">
+            <div className="rounded-full bg-primary/10 p-3">
                 <LuMail className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-2xl font-semibold">Check your email</h1>
@@ -92,7 +90,7 @@ function VerifyEmailContent() {
                 {email && <p className="font-medium text-foreground my-2">{email}</p>}
                 <p className="text-sm mt-2">Click the link in the email to verify your account.</p>
             </div>
-            
+
             <div className="flex flex-col gap-3 w-full mt-6">
                 <Button variant="outline" className="w-full" asChild>
                     <Link href="/login">Return to Login</Link>
