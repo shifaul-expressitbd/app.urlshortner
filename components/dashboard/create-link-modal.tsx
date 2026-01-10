@@ -57,7 +57,7 @@ interface CreateLinkModalProps {
 interface Domain {
   id: string;
   domain: string;
-  status: string;
+  verificationStatus: string;
 }
 
 function useMediaQuery(query: string) {
@@ -111,7 +111,7 @@ export function CreateLinkModal({ onSuccess, trigger }: CreateLinkModalProps) {
           .get<Domain[]>("/domains")
           .then((res) => {
             const activeDomains = (Array.isArray(res) ? res : []).filter(
-              (d) => d.status === "ACTIVE",
+              (d) => d.verificationStatus === "VERIFIED",
             );
             setDomains(activeDomains);
           })
