@@ -38,6 +38,11 @@ interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
     asChild?: boolean
+    /**
+     * Error state forwarded from input groups/form fields. We accept it
+     * but intentionally do not forward it to the DOM to avoid React warnings.
+     */
+    error?: boolean
 }
 
 /**
@@ -55,7 +60,7 @@ interface ButtonProps
 import { Slot } from "@/components/ui/slot"
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, variant, size, asChild = false, ...props }, ref) => {
+    ({ className, variant, size, asChild = false, error, ...props }, ref) => {
         const Comp = asChild ? Slot : "button"
         return (
             <Comp
