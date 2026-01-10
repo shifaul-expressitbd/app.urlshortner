@@ -25,7 +25,7 @@ export default function LandingPage() {
             >
               ✨ Version 2.0 is now live
             </Badge>
-            <h1 className="text-4xl font-extrabold tracking-tight lg:text-7xl mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400">
+            <h1 className="text-4xl font-extrabold tracking-tight lg:text-7xl mb-6 bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-black dark:from-white dark:to-gray-400">
               Shorten links.
               <br />
               <span className="text-primary">Expand your reach.</span>
