@@ -97,15 +97,16 @@ SelectTrigger.displayName = "SelectTrigger"
 
 interface SelectValueProps {
     placeholder?: string
+    children?: React.ReactNode
 }
 
-function SelectValue({ placeholder }: SelectValueProps) {
+function SelectValue({ placeholder, children }: SelectValueProps) {
     const context = React.useContext(SelectContext)
     if (!context) throw new Error("SelectValue must be used within Select")
 
     return (
         <span className={cn(!context.value && "text-muted-foreground")}>
-            {context.value || placeholder}
+            {children || context.value || placeholder}
         </span>
     )
 }

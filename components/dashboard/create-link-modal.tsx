@@ -211,7 +211,11 @@ export function CreateLinkModal({ onSuccess, trigger }: CreateLinkModalProps) {
             onValueChange={setSelectedFolder}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select a folder" />
+              <SelectValue placeholder="Select a folder">
+                {selectedFolder === "none"
+                  ? "No Folder"
+                  : folders.find((f) => f.id === selectedFolder)?.name}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">No Folder</SelectItem>
@@ -234,7 +238,11 @@ export function CreateLinkModal({ onSuccess, trigger }: CreateLinkModalProps) {
             onValueChange={setSelectedDomain}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select domain" />
+              <SelectValue placeholder="Select domain">
+                {selectedDomain === "none"
+                  ? "Default (shifaul.dev)"
+                  : domains.find((d) => d.id === selectedDomain)?.domain}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="none">Default (shifaul.dev)</SelectItem>
