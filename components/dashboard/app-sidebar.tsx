@@ -1,25 +1,5 @@
 "use client";
 
-import * as React from "react";
-import {
-  LuLayoutDashboard,
-  LuLink,
-  LuFolder,
-  LuSettings,
-  LuChartBar,
-  LuLogOut,
-  LuSparkles,
-  LuUser,
-  LuChevronsUpDown,
-  LuBell,
-  LuCheck,
-  LuSun,
-  LuMoon,
-  LuMonitor,
-  LuSunMoon,
-} from "react-icons/lu";
-import { useTheme } from "next-themes";
-import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -31,22 +11,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSidebar } from "@/components/ui/sidebar";
+import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
+import * as React from "react";
+import {
+  LuBell,
+  LuChartBar,
+  LuCheck,
+  LuChevronsUpDown,
+  LuFolder,
+  LuLayoutDashboard,
+  LuLink,
+  LuLogOut,
+  LuMonitor,
+  LuMoon,
+  LuSettings,
+  LuSparkles,
+  LuSun,
+  LuSunMoon,
+} from "react-icons/lu";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarSeparator,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 
 function ThemeToggleItem({
   theme,
@@ -66,7 +64,7 @@ function ThemeToggleItem({
         "h-6 w-6 flex items-center justify-center rounded-md cursor-pointer transition-all hover:text-foreground",
         isActive
           ? "bg-background text-foreground shadow-sm"
-          : "text-muted-foreground hover:bg-background/50",
+          : "text-muted-foreground hover:bg-background/50"
       )}
       onClick={(e) => {
         e.preventDefault();
@@ -99,17 +97,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="/dashboard">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <LuSparkles className="size-4" />
+          <SidebarMenuItem className="flex items-center justify-center">
+            <SidebarMenuButton
+              size="lg"
+              className="flex items-center justify-center m-0 p-0 hover:bg-transparent focus:bg-transparent active:bg-transparent"
+              asChild
+            >
+              <Link href="/dashboard">
+                <div className="hidden aspect-square size-10 items-center justify-center rounded-lg text-primary-foreground group-data-[collapsible=icon]:flex">
+                  <Image
+                    src="/assets/icon.png"
+                    alt="cutzy Logo"
+                    height={100}
+                    width={100}
+                    quality={100}
+                    priority={true}
+                    className="h-6 w-6"
+                  />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">UrlShortener</span>
-                  <span className="">v1.0.0</span>
+                <div className="flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden">
+                  <Image
+                    src="/assets/cutzy logo.png"
+                    alt="cutzy Logo"
+                    quality={100}
+                    priority={true}
+                    width={100}
+                    height={32}
+                  />
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -144,10 +160,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Folders">
-                <a href="/folders">
+                <Link href="/folders">
                   <LuFolder />
                   <span>Folders</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
