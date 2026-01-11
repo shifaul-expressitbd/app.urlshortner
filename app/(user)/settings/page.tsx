@@ -94,7 +94,7 @@ function DomainsTab() {
       } else {
         toast.info(
           result.message ||
-            "Verification pending. Please check your DNS configuration.",
+          "Verification pending. Please check your DNS configuration.",
         );
       }
       fetchDomains();
@@ -220,7 +220,7 @@ function DomainsTab() {
                     <div>
                       <span className="text-muted-foreground">Value:</span>{" "}
                       <code className="bg-muted px-1 rounded">
-                        urlshortner.shifaul.dev
+                        cutzy.app
                       </code>
                     </div>
                   </div>
