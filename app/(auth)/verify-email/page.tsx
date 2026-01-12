@@ -95,9 +95,25 @@ function VerifyEmailContent() {
                 <Button variant="outline" className="w-full" asChild>
                     <Link href="/login">Return to Login</Link>
                 </Button>
-                <p className="text-xs text-muted-foreground">
-                    Didn't receive the email? <button className="text-primary hover:underline">Resend</button>
-                </p>
+                <div className="text-xs text-muted-foreground">
+                    Didn't receive the email?{" "}
+                    <button
+                        onClick={async () => {
+                            if (!email) return;
+                            const toastId = toast.loading("Sending verification email...");
+                            try {
+                                await api.post('/auth/resend-verification-email', { email });
+                                toast.success("Verification email sent!", { id: toastId });
+                            } catch (error: any) {
+                                toast.error(error.message || "Failed to send email", { id: toastId });
+                            }
+                        }}
+                        disabled={!email}
+                        className="text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Resend
+                    </button>
+                </div>
             </div>
         </div>
     )

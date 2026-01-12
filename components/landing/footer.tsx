@@ -158,7 +158,7 @@ export function Footer() {
                 <ul role="list" className="mt-6 space-y-4">
                   <li>
                     <Link
-                      href="#"
+                      href="/privacy"
                       className="text-sm leading-6 text-muted-foreground hover:text-foreground"
                     >
                       Privacy Policy
@@ -166,7 +166,7 @@ export function Footer() {
                   </li>
                   <li>
                     <Link
-                      href="#"
+                      href="/terms"
                       className="text-sm leading-6 text-muted-foreground hover:text-foreground"
                     >
                       Terms of Service

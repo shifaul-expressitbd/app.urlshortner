@@ -51,6 +51,12 @@ export default function LoginPage() {
 
       login(res.accessToken, res.refreshToken, res.user);
     } catch (error: any) {
+      if (error.message === "Please verify your email") {
+        toast.error("Please verify your email address");
+        // Use window.location to redirect to ensure full page load if needed, or router.push
+        window.location.href = `/verify-email?email=${encodeURIComponent(data.email)}`;
+        return;
+      }
       toast.error(error.message || "Login failed");
     } finally {
       setLoading(false);
