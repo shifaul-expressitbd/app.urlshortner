@@ -1,0 +1,34 @@
+# Cutzy - Enterprise Link Management
+
+Cutzy is a secure, scalable, and powerful URL shortening service designed for modern teams.
+It provides advanced analytics, custom domains, and team collaboration features.
+
+## Core Features
+
+- **Link Management**: Shorten, track, and manage URLs easily.
+- **Analytics**: Detailed insights into click data, including location, device, and referrer.
+- **Custom Domains**: Use your own brand domains for links.
+- **QR Codes**: Generate QR codes for any short link.
+- **Team Collaboration**: Invite members and manage permissions.
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 (App Router), React, Tailwind CSS
+- **Backend**: NestJS (Microservices architecture)
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: JWT, OAuth (Google, GitHub)
+
+## API Documentation
+
+The API allows for programmatic creation and management of links.
+Refer to the official documentation for endpoints and usage.
+(Add link to API docs if available, e.g., /docs)
+
+## Main Pages
+
+- Home: https://cutzy.app/
+- Login: https://cutzy.app/login
+- Register: https://cutzy.app/register
+- Pricing: https://cutzy.app/pricing
+- Features: https://cutzy.app/features
+- Contact: https://cutzy.app/contact
