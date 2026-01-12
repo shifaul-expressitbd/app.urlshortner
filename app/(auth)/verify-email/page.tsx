@@ -97,7 +97,8 @@ function VerifyEmailContent() {
                 </Button>
                 <div className="text-xs text-muted-foreground">
                     Didn't receive the email?{" "}
-                    <button
+                    <Button
+                        variant="link"
                         onClick={async () => {
                             if (!email) return;
                             const toastId = toast.loading("Sending verification email...");
@@ -109,10 +110,10 @@ function VerifyEmailContent() {
                             }
                         }}
                         disabled={!email}
-                        className="text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-xs text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed p-0"
                     >
                         Resend
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
