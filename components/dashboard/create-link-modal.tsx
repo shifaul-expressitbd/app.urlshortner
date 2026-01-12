@@ -167,9 +167,9 @@ export function CreateLinkModal({ onSuccess, trigger }: CreateLinkModalProps) {
   const getShortUrlPrefix = () => {
     if (selectedDomain && selectedDomain !== "none") {
       const domain = domains.find((d) => d.id === selectedDomain);
-      return domain ? `${domain.domain}/` : "shifaul.dev/s/";
+      return domain ? `${domain.domain}/` : "cutzy.app/s/";
     }
-    return "shifaul.dev/s/";
+    return "cutzy.app/s/";
   };
 
   const formContent = (
@@ -240,12 +240,12 @@ export function CreateLinkModal({ onSuccess, trigger }: CreateLinkModalProps) {
             <SelectTrigger>
               <SelectValue placeholder="Select domain">
                 {selectedDomain === "none"
-                  ? "Default (shifaul.dev)"
+                  ? "Default (cutzy.app)"
                   : domains.find((d) => d.id === selectedDomain)?.domain}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">Default (shifaul.dev)</SelectItem>
+              <SelectItem value="none">Default (cutzy.app)</SelectItem>
               {domains.map((d) => (
                 <SelectItem key={d.id} value={d.id}>
                   {d.domain}
