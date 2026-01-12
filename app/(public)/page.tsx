@@ -23,7 +23,7 @@ export default function LandingPage() {
               variant="outline"
               className="mb-6 py-1.5 px-4 text-sm border-primary/20 bg-primary/5 text-primary"
             >
-              ✨ Version 2.0 is now live
+              ✨ Version 1.0 is now live
             </Badge>
             <h1 className="text-4xl font-extrabold tracking-tight lg:text-7xl mb-6 bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-black dark:from-white dark:to-gray-400">
               Shorten links.
@@ -166,9 +166,9 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative isolate px-6 py-24 sm:py-32 lg:px-8 bg-zinc-900 text-white dark:bg-primary/5">
+      <section className="relative  px-6 py-24 sm:py-32 lg:px-8 text-black dark:bg-primary/5">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-black dark:text-white">
+          <h2 className="text-3xl font-bold sm:text-4xl ">
             Ready to get started?
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-zinc-300 dark:text-muted-foreground">
